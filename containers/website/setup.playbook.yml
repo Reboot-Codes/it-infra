@@ -1,0 +1,89 @@
+---
+- name: Setup Website
+  hosts: website
+  tasks:
+    # Install Deps
+    - name: Install Python, Docker, and UFW
+      community.general.apk:
+        name: python3,py3-pip,docker,docker-cli-compose
+        available: true
+    - name: Install Python Deps
+      pip:
+        name:
+          - PyYAML
+          - passlib
+    # Setup User
+    - name: Calculate User Password Hash
+      command:
+        cmd: >
+          {{ ansible_python_interpreter }} -c "from passlib.hash import sha512_crypt; print(sha512_crypt.using(rounds=5000).hash("{{ user_password }}")"
+      register: user_password_hash_result
+    - name: Ensure User `ducky` Exists
+      user:
+        name: ducky
+        groups:
+          - docker
+        append: true
+        password: >
+          {{ user_password_hash_result.stdout }}
+    # Create Files
+    - name: Create Run Directory
+      file:
+        name: /opt/run
+        state: directory
+        mode: 0775
+        owner: ducky
+        group: docker
+    - name: Create MySQL Directory
+      file:
+        name: /opt/run/mysql
+        state: directory
+        mode: 0775
+        owner: ducky
+        group: docker
+    - name: Create WordPress Directory
+      file:
+        name: /opt/run/wordpress
+        state: directory
+        mode: 0775
+        owner: ducky
+        group: docker
+    - name: Copy Docker Compose File
+      template:
+        src: ./files/compose.yml.j2
+        dest: /opt/run/compose.yml
+        mode: 0775
+        owner: ducky
+        group: docker
+    # Spin Up
+    - name: Start Docker Daemon
+      service:
+        name: docker
+        state: started
+    - name: Docker Compose Up
+      command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run
+    # Setup Firewall
+    - name: Allow SSH Locally
+      community.general.ufw:
+        rule: allow
+        port: 22
+        src: '{{ item }}'
+        loop:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/24
+    - name: Allow HTTP Locally
+      community.general.ufw:
+        rule: allow
+        port: 80
+        src: '{{ item }}'
+        loop:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/24
+    - name: Deny Everything Else and Enable Firewall
+      community.general.ufw:
+        default: deny
+        state: enabled

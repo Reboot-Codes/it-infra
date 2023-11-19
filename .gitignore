@@ -1,0 +1,2 @@
+containers/*/vars/*.yml
+!containers/*/vars/default.yml

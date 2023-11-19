@@ -1,0 +1,8 @@
+---
+- name: Spin Down Website
+  hosts: website
+  tasks:
+    - name: Docker Compose Down
+      command:
+        cmd: "docker compose down ./compose.yml"
+        chdir: /opt/run

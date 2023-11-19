@@ -1,0 +1,8 @@
+---
+- name: Spin Up Website
+  hosts: website
+  tasks:
+    - name: Docker Compose Up
+      command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run
