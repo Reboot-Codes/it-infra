@@ -1,0 +1,19 @@
+---
+- name: Update Website
+  hosts: website
+  tasks:
+    - name: Docker Compose Down
+      ansible.builtin.command:
+        cmd: "docker compose down ./compose.yml"
+        chdir: /opt/run/website
+    - name: Copy Compose File
+      ansible.builtin.template:
+        src: files/docker-compose.yml.j2
+        dest: /opt/run/website/docker-compose.yml
+        mode: "0775"
+        owner: ducky
+        group: docker
+    - name: Docker Compose Up
+      ansible.builtin.command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run/website

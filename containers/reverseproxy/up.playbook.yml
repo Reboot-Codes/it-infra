@@ -1,8 +1,8 @@
 ---
-- name: Spin Up Website
-  hosts: website
+- name: Spin Up Reverse Proxy
+  hosts: reverseproxy
   tasks:
     - name: Docker Compose Up
       ansible.builtin.command:
         cmd: "docker compose up ./compose.yml"
-        chdir: /opt/run/website
+        chdir: /opt/run/reverseproxy
