@@ -6,9 +6,9 @@ services:
       - /opt/run/website/mysql:/var/lib/mysql
     environment:
       - MARIADB_USER=wordpress
-      - MARIADB_PASSWORD={{ wordpress_db_user_password }}
+      - MARIADB_PASSWORD={{ website.wordpress_db_user_password }}
       - MARIADB_DATABASE=wordpress
-      - MARIADB_ROOT_PASSWORD={{ root_db_user_password }}
+      - MARIADB_ROOT_PASSWORD={{ website.root_db_user_password }}
   phpmyadmin:
     depends_on:
       - db
@@ -26,6 +26,6 @@ services:
     environment:
       - WORDPRESS_DB_HOST=db
       - WORDPRESS_DB_USER=wordpress
-      - WORDPRESS_DB_PASSWORD={{ wordpress_db_user_password }}
+      - WORDPRESS_DB_PASSWORD={{ website.wordpress_db_user_password }}
       - WORDPRESS_DB_NAME=wordpress
       - WORDPRESS_TABLE_PREFIX=wp_

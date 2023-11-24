@@ -16,7 +16,7 @@
     - name: Calculate User Password Hash
       ansible.builtin.command:
         cmd: >
-          {{ ansible_python_interpreter }} -c "from passlib.hash import sha512_crypt; print(sha512_crypt.using(rounds=5000).hash("{{ user_password }}")"
+          {{ ansible_python_interpreter }} -c "from passlib.hash import sha512_crypt; print(sha512_crypt.using(rounds=5000).hash("{{ website.user_password }}")"
       register: user_password_hash_result
     - name: Ensure User `ducky` Exists
       ansible.builtin.user:

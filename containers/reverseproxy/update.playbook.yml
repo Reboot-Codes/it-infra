@@ -1,0 +1,34 @@
+---
+- name: Update Website
+  hosts: reverseproxy
+  tasks:
+    - name: Docker Compose Down
+      ansible.builtin.command:
+        cmd: "docker compose down ./compose.yml"
+        chdir: /opt/run/reverseproxy
+    - name: Copy Compose File
+      ansible.builtin.template:
+        src: files/docker-compose.yml.j2
+        dest: /opt/run/reverseproxy/docker-compose.yml
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Generate Static Traefik Config
+      ansible.builtin.template:
+        src: files/traefik/traefik.yml.j2
+        dest: /opt/run/reverseproxy/traefik/traefik.yml
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Generate Dyanmic Traefik Configs
+      ansible.builtin.template:
+        src: "files/traefik/services/{{ item }}.yml.j2"
+        dest: "/opt/run/reverseproxy/traefik/services/{{ item }}.yml"
+        mode: "0775"
+        owner: jenny
+        group: docker
+      loop: "{{ services | list }}"
+    - name: Docker Compose Up
+      ansible.builtin.command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run/reverseproxy

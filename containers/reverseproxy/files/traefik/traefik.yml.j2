@@ -1,0 +1,25 @@
+# WIP: Working on securing the dashboard properly...
+#api:
+#  dashboard: true
+
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+    http:
+      tls:
+        certresolver: "letsencrypt"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      storage: acme.json
+      email: "{{ reverseproxy.ca_email }}"
+      tlsChallenge:
+        entryPoint: https
+
+providers:
+  file:
+    directory: /etc/traefik/services
+    watch: true

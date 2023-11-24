@@ -1,0 +1,114 @@
+- name: Setup Reverse Proxy
+  hosts: reverseproxy
+  tasks:
+    - name: Install/Update Python, Docker, and UFW
+      community.general.apk:
+        name: python3,py3-pip,docker,docker-cli-compose,ufw
+        upgrade: true
+    - name: Install Python Deps
+      ansible.builtin.pip:
+        name:
+          - PyYAML
+          - passlib
+    - name: Generate Password Hash
+      ansible.builtin.command:
+        cmd: >
+          {{ ansible_python_interperetor }} -c "from passlib.hash import sha512_crypt; print(sha512_crypt.using(rounds=5000).hash("{{ user_password }}"))"
+      register: user_password_hash_result
+    - name: Set Password Hash Variable
+      ansible.builtin.set_fact:
+        user_password_hash: "{{ user_password_hash_result.stdout }}"
+    - name: "Ensure User: `jenny` Exists"
+      ansible.builtin.user:
+        name: jenny
+        groups:
+          - docker
+        append: true
+        password: "{{ user_password_hash }}"
+    - name: Start Docker Daemon
+      ansible.builtin.service:
+        name: docker
+        state: started
+    - name: Create Run Dir
+      ansible.builtin.file:
+        name: /opt/run
+        state: directory
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Create Working Dir
+      ansible.builtin.file:
+        name: /opt/run/reverseproxy
+        state: directory
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Create Traefik Dir
+      ansible.builtin.file:
+        name: /opt/run/reverseproxy/traefik
+        state: directory
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Create Var Dir
+      ansible.builtin.file:
+        name: /opt/run/reverseproxy/var
+        state: directory
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Create DuckDNS Dir
+      ansible.builtin.file:
+        name: /opt/run/reverseproxy/duckdns
+        state: directory
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Copy Compose File
+      ansible.builtin.template:
+        src: files/docker-compose.yml.j2
+        dest: /opt/run/reverseproxy/docker-compose.yml
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Generate Static Traefik Config
+      ansible.builtin.template:
+        src: files/traefik/traefik.yml.j2
+        dest: /opt/run/reverseproxy/traefik/traefik.yml
+        mode: "0775"
+        owner: jenny
+        group: docker
+    - name: Generate Dyanmic Traefik Configs
+      ansible.builtin.template:
+        src: "files/traefik/services/{{ item }}.yml.j2"
+        dest: "/opt/run/reverseproxy/traefik/services/{{ item }}.yml"
+        mode: "0775"
+        owner: jenny
+        group: docker
+      loop: "{{ services | list }}"
+    - name: Start Docker Services
+      ansible.builtin.command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run/reverseproxy
+    - name: Allow SSH Locally
+      community.general.ufw:
+        rule: allow
+        port: 22
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HTTP(S) Globally
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        src: 'any'
+      loop:
+        - "80"
+        - "443"
+    # Add extra services here
+    - name: Deny Everything Else and Enable Firewall
+      community.general.ufw:
+        default: deny
+        state: enabled

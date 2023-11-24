@@ -1,3 +1,15 @@
-website_user_password: "Ducky-told-all-the-st0ries"
-website_wordpress_db_user_password: "wordpress-db-user-password-hehe"
-website_root_db_user_password: "root-db-user-password-hehe"
+reverseproxy:
+  duckdns_token: "SomeToken"
+  duckdns_subdomains:
+    - listOfSubDomains
+  user_password: "Jenny-was-0ne-of-the-best"
+  ca_email: "test@example.com"
+  domain: "example.com"
+  services:
+    - cloud
+    - git
+    - website
+website:
+  user_password: "Ducky-told-all-the-st0ries"
+  wordpress_db_user_password: "wordpress-db-user-password-hehe"
+  root_db_user_password: "root-db-user-password-hehe"

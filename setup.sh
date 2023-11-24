@@ -4,5 +4,5 @@
 services=("website" "reverseproxy")
 
 for service in "${!services[@]}"; do
-  ansible-playbook ./containers/$service/up.playbook.yml --vars "@vars.yml"
+  ansible-playbook ./containers/$service/setup.playbook.yml --vars "@vars.yml"
 done

@@ -1,0 +1,18 @@
+version: "3.11"
+services:
+  traefik:
+    image: traefik:latest
+    volumes:
+      - /opt/run/reverseproxy/traefik/:/etc/traefik/
+      - /opt/run/reverseproxy/var:/var/
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    network_mode: host 
+    environment:
+      - SUBDOMAINS={{ reverseproxy.duckdns_subdomains | join(",") }}
+      - TOKEN={{ reverseproxy.duckdns_token }}
+      - UPDATE_IP=ipv4 
+    volumes:
+      - /opt/run/reverseproxy/duckdns:/config 
+    restart: unless-stopped
