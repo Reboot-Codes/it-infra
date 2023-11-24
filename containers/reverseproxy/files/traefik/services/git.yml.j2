@@ -1,0 +1,20 @@
+http:
+  routers:
+    git:
+      rule: "Host(`git.{{ reverseproxy.domain }}`)`)"
+      entrypoints:
+        - "https"
+        - "http"
+      service: git
+  services:
+    git:
+      loadBalancer:
+        servers:
+          - url:
+            {% for host in hostvars[groups['git']] %}
+            - "http://{{ host['ansible_default_ipv4']['address'] }}:80"
+            {% endfor %}
+  middlewares:
+    https-redirect:
+      redirectscheme:
+        scheme: https

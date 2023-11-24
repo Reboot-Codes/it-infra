@@ -6,10 +6,13 @@ reverseproxy:
   ca_email: "test@example.com"
   domain: "example.com"
   services:
-    - cloud
     - git
     - website
 website:
   user_password: "Ducky-told-all-the-st0ries"
   wordpress_db_user_password: "wordpress-db-user-password-hehe"
+  root_db_user_password: "root-db-user-password-hehe"
+git:
+  user_password: "Abby-is-the-best-f0rensic-scientist"
+  gitea_db_user_password: "gitea-db-user-password-hehe"
   root_db_user_password: "root-db-user-password-hehe"

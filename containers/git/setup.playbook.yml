@@ -1,0 +1,82 @@
+---
+- name: Setup Git
+  hosts: git
+  tasks:
+    # Install Deps
+    - name: Install Python, Docker, and UFW
+      community.general.apk:
+        name: python3,py3-pip,docker,docker-cli-compose
+        available: true
+    - name: Install Python Deps
+      ansible.builtin.pip:
+        name:
+          - PyYAML
+          - passlib
+    # Setup User
+    - name: Calculate User Password Hash
+      ansible.builtin.command:
+        cmd: >
+          {{ ansible_python_interpreter }} -c "from passlib.hash import sha512_crypt; print(sha512_crypt.using(rounds=5000).hash("{{ git.user_password }}")"
+      register: user_password_hash_result
+    - name: Ensure User `abby` Exists
+      ansible.builtin.user:
+        name: abby
+        groups:
+          - docker
+        append: true
+        password: >
+          {{ user_password_hash_result.stdout }}
+    # Create Files
+    - name: Create Run Directory
+      ansible.builtin.file:
+        name: /opt/run/
+        state: directory
+        mode: "0775"
+        owner: abby
+        group: docker
+    - name: Create Working Directory
+      ansible.builtin.file:
+        name: /opt/run/git
+        state: directory
+        mode: "0775"
+        owner: abby
+        group: docker
+    - name: Copy Docker Compose File
+      ansible.builtin.template:
+        src: ./files/compose.yml.j2
+        dest: /opt/run/git/compose.yml
+        mode: "0775"
+        owner: abby
+        group: docker
+    # Spin Up
+    - name: Start Docker Daemon
+      ansible.builtin.service:
+        name: docker
+        state: started
+    - name: Docker Compose Up
+      ansible.builtin.command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run/git
+    # Setup Firewall
+    - name: Allow SSH Locally
+      community.general.ufw:
+        rule: allow
+        port: 22
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HTTP Locally
+      community.general.ufw:
+        rule: allow
+        port: 80
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Deny Everything Else and Enable Firewall
+      community.general.ufw:
+        default: deny
+        state: enabled

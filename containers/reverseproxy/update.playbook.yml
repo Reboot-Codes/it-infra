@@ -1,5 +1,5 @@
 ---
-- name: Update Website
+- name: Update Reverse Proxy
   hosts: reverseproxy
   tasks:
     - name: Docker Compose Down
@@ -8,8 +8,8 @@
         chdir: /opt/run/reverseproxy
     - name: Copy Compose File
       ansible.builtin.template:
-        src: files/docker-compose.yml.j2
-        dest: /opt/run/reverseproxy/docker-compose.yml
+        src: files/compose.yml.j2
+        dest: /opt/run/reverseproxy/compose.yml
         mode: "0775"
         owner: jenny
         group: docker

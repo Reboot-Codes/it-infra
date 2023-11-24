@@ -1,19 +1,19 @@
 ---
-- name: Update Website
-  hosts: website
+- name: Update Git
+  hosts: git
   tasks:
     - name: Docker Compose Down
       ansible.builtin.command:
         cmd: "docker compose down ./compose.yml"
-        chdir: /opt/run/website
+        chdir: /opt/run/git
     - name: Copy Compose File
       ansible.builtin.template:
         src: files/compose.yml.j2
-        dest: /opt/run/website/compose.yml
+        dest: /opt/run/git/compose.yml
         mode: "0775"
         owner: ducky
         group: docker
     - name: Docker Compose Up
       ansible.builtin.command:
         cmd: "docker compose up ./compose.yml"
-        chdir: /opt/run/website
+        chdir: /opt/run/git
