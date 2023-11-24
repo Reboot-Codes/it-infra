@@ -3,7 +3,7 @@ services:
   db:
     image: mariadb:11.1.2
     volumes:
-      - /opt/run/mysql:/var/lib/mysql
+      - /opt/run/website/mysql:/var/lib/mysql
     environment:
       - MARIADB_USER=wordpress
       - MARIADB_PASSWORD={{ wordpress_db_user_password }}
@@ -20,7 +20,7 @@ services:
       - db
     image: wordpress:6.3.2
     volumes:
-      - /opt/run/wordpress:/var/www/html
+      - /opt/run/website/wordpress:/var/www/html
     ports:
       - 80:80
     environment:

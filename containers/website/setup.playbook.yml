@@ -29,21 +29,28 @@
     # Create Files
     - name: Create Run Directory
       ansible.builtin.file:
-        name: /opt/run
+        name: /opt/run/
+        state: directory
+        mode: "0775"
+        owner: ducky
+        group: docker
+    - name: Create Working Directory
+      ansible.builtin.file:
+        name: /opt/run/website
         state: directory
         mode: "0775"
         owner: ducky
         group: docker
     - name: Create MySQL Directory
       ansible.builtin.file:
-        name: /opt/run/mysql
+        name: /opt/run/website/mysql
         state: directory
         mode: "0775"
         owner: ducky
         group: docker
     - name: Create WordPress Directory
       ansible.builtin.file:
-        name: /opt/run/wordpress
+        name: /opt/run/website/wordpress
         state: directory
         mode: "0775"
         owner: ducky
@@ -51,7 +58,7 @@
     - name: Copy Docker Compose File
       ansible.builtin.template:
         src: ./files/compose.yml.j2
-        dest: /opt/run/compose.yml
+        dest: /opt/run/website/compose.yml
         mode: "0775"
         owner: ducky
         group: docker
@@ -63,7 +70,7 @@
     - name: Docker Compose Up
       ansible.builtin.command:
         cmd: "docker compose up ./compose.yml"
-        chdir: /opt/run
+        chdir: /opt/run/website
     # Setup Firewall
     - name: Allow SSH Locally
       community.general.ufw:
