@@ -1,0 +1,47 @@
+http:
+  routers:
+    minecraft-http:
+      rule: "Host(`minecraft.{{ reverseproxy.domain }}`)`)"
+      entryPoints:
+        - "https"
+        - "http"
+      service: minecraft-http
+  services:
+    minecraft-http:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "http://{{ host['ansible_default_ipv4']['address'] }}:7867"
+          {% endfor %}
+  middlewares:
+    https-redirect:
+      redirectscheme:
+        scheme: https
+
+tcp:
+  routers:
+    minecraft-java:
+      entryPoints:
+        - "minecraft-java"
+      service: minecraft-java
+  services:
+    minecraft-java:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "http://{{ host['ansible_default_ipv4']['address'] }}:25565"
+          {% endfor %}
+
+udp:
+  routers:
+    minecraft-bedrock:
+      entryPoints:
+        - "minecraft-bedrock"
+      service: minecraft-bedrock
+  services:
+    minecraft-java:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "http://{{ host['ansible_default_ipv4']['address'] }}:19132"
+          {% endfor %}

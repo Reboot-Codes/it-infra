@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Hej! Order here is important!
-services=("website" "git" "reverseproxy")
+services=("website" "git" "games" "reverseproxy")
 
 for service in "${!services[@]}"; do
   ansible-playbook ./containers/$service/setup.playbook.yml --vars "@vars.yml"

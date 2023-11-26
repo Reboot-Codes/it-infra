@@ -1,0 +1,8 @@
+---
+- name: Spin Down Games
+  hosts: games
+  tasks:
+    - name: Docker Compose Down
+      ansible.builtin.command:
+        cmd: "docker compose down ./compose.yml"
+        chdir: /opt/run/games

@@ -6,6 +6,7 @@ Currently done:
 
 - `website`
 - `git`
+- `games`
 - `reverseproxy`
 
 ## Setup

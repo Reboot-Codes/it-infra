@@ -1,0 +1,214 @@
+---
+- name: Setup Games
+  hosts: games
+  tasks:
+    # Install Deps
+    - name: Install Python, Docker, and UFW
+      community.general.apk:
+        name: python3,py3-pip,docker,docker-cli-compose
+        available: true
+    - name: Install Python Deps
+      ansible.builtin.pip:
+        name:
+          - PyYAML
+          - passlib
+    # Setup User
+    - name: Calculate User Password Hash
+      ansible.builtin.command:
+        cmd: >
+          {{ ansible_python_interpreter }} -c "from passlib.hash import sha512_crypt; print(sha512_crypt.using(rounds=5000).hash("{{ games.user_password }}")"
+      register: user_password_hash_result
+    - name: Ensure User `clay` Exists
+      ansible.builtin.user:
+        name: clay
+        groups:
+          - docker
+        append: true
+        password: >
+          {{ user_password_hash_result.stdout }}
+    # Create Files
+    - name: Create Run Directory
+      ansible.builtin.file:
+        name: /opt/run/
+        state: directory
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Create Working Directory
+      ansible.builtin.file:
+        name: /opt/run/games
+        state: directory
+        mode: "0775"
+        owner: clay
+        group: docker
+    # Setup Minecraft Server
+    - name: Create Minecraft Directory
+      ansible.builtin.file:
+        name: /opt/run/games/minecraft
+        state: directory
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Create Minecraft Config Directory
+      ansible.builtin.file:
+        name: /opt/run/games/minecraft/config
+        state: directory
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Create Minecraft Plugins Directory
+      ansible.builtin.file:
+        name: /opt/run/games/minecraft/plugins
+        state: directory
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Create Minecraft Plugin Config Directory for Geyser
+      ansible.builtin.file:
+        name: /opt/run/games/minecraft/plugins/Geyser-Spigot
+        state: directory
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Server Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/server.properties
+        dest: /opt/run/minecraft/server.properties
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Global Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/config/paper-global.yml.j2
+        dest: /opt/run/minecraft/config/paper-global.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Default World Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/config/paper-world-defaults.yml.j2
+        dest: /opt/run/minecraft/config/paper-world-defaults.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Spigot Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/spigot.yml.j2
+        dest: /opt/run/minecraft/spigot.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Bukkit Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/bukkit.yml.j2
+        dest: /opt/run/minecraft/bukkit.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft EULA Agreement
+      ansible.builtin.template:
+        src: ./files/minecraft/eula.txt.j2
+        dest: /opt/run/minecraft/eula.txt
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Plugin Config for Geyser
+      ansible.builtin.template:
+        src: ./files/minecraft/plugins/Geyser-Spigot/config.yml.j2
+        dest: /opt/run/minecraft/plugins/Geyser-Spigot/config.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Docker Build File
+      ansible.builtin.template:
+        src: ./files/minecraft-dockerfile.j2
+        dest: /opt/run/games/minecraft-dockerfile
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Download Minecraft Server JAR
+      ansible.builtin.get_url:
+        url: >
+          https://api.papermc.io/v2/projects/paper/versions/{{ games.minecraft.version }}/builds/{{ ganes.minecraft.build }}/downloads/paper-{{ games.minecraft.version }}-{{ games.minecraft.version }}.jar
+        dest: /opt/run/games/minecraft/paper.jar
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Download Minecraft Plugins
+      ansible.builtin.get_url:
+        url: >
+          {{ item.url }}
+        dest: >
+          /opt/run/games/minecraft/plugins/{{ item.filename }}
+        mode: "0775"
+        owner: clay
+        group: docker
+      loop: >
+        {{ games.minecraft.plugins | list }}
+    - name: Copy Docker Compose File
+      ansible.builtin.template:
+        src: ./files/compose.yml.j2
+        dest: /opt/run/games/compose.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    # Spin Up
+    - name: Start Docker Daemon
+      ansible.builtin.service:
+        name: docker
+        state: started
+    - name: Docker Compose Up
+      ansible.builtin.command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run/games
+    # Setup Firewall
+    - name: Allow SSH Locally
+      community.general.ufw:
+        rule: allow
+        port: 22
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow Minecraft Bedrock Locally # 1/2
+      community.general.ufw:
+        rule: allow
+        port: 19132
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    # Er, the plugin doesn't listen to it, so uh, *sure*
+    # - name: Allow Minecraft Bedrock Locally 2/2
+    #   community.general.ufw:
+    #     rule: allow
+    #     port: 19133
+    #     src: '{{ item }}'
+    #   loop:
+    #     - 10.0.0.0/8
+    #     - 172.16.0.0/12
+    #     - 192.168.0.0/24
+    - name: Allow Minecraft Java Locally
+      community.general.ufw:
+        rule: allow
+        port: 25565
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow MCDash HTTP Locally
+      community.general.ufw:
+        rule: allow
+        port: 7867
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Deny Everything Else and Enable Firewall
+      community.general.ufw:
+        default: deny
+        state: enabled

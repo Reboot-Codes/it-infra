@@ -1,0 +1,97 @@
+---
+- name: Update Games
+  hosts: games
+  tasks:
+    # Spin Down
+    - name: Docker Compose Down
+      ansible.builtin.command:
+        cmd: "docker compose down ./compose.yml"
+        chdir: /opt/run/games
+    # Copy Configuration
+    - name: Copy Minecraft Server Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/server.properties
+        dest: /opt/run/minecraft/server.properties
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Global Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/config/paper-global.yml.j2
+        dest: /opt/run/minecraft/config/paper-global.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Default World Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/config/paper-world-defaults.yml.j2
+        dest: /opt/run/minecraft/config/paper-world-defaults.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Spigot Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/spigot.yml.j2
+        dest: /opt/run/minecraft/spigot.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Bukkit Configuration
+      ansible.builtin.template:
+        src: ./files/minecraft/bukkit.yml.j2
+        dest: /opt/run/minecraft/bukkit.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft EULA Agreement
+      ansible.builtin.template:
+        src: ./files/minecraft/eula.txt.j2
+        dest: /opt/run/minecraft/eula.txt
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Plugin Config for Geyser
+      ansible.builtin.template:
+        src: ./files/minecraft/plugins/Geyser-Spigot/config.yml.j2
+        dest: /opt/run/minecraft/plugins/Geyser-Spigot/config.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Copy Minecraft Docker Build File
+      ansible.builtin.template:
+        src: ./files/minecraft-dockerfile.j2
+        dest: /opt/run/games/minecraft-dockerfile
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Download Minecraft Server JAR
+      ansible.builtin.get_url:
+        url: >
+          https://api.papermc.io/v2/projects/paper/versions/{{ games.minecraft.version }}/builds/{{ ganes.minecraft.build }}/downloads/paper-{{ games.minecraft.version }}-{{ games.minecraft.version }}.jar
+        dest: /opt/run/games/minecraft/paper.jar
+        mode: "0775"
+        owner: clay
+        group: docker
+    - name: Download Minecraft Plugins
+      ansible.builtin.get_url:
+        url: >
+          {{ item.url }}
+        dest: >
+          /opt/run/games/minecraft/plugins/{{ item.filename }}
+        mode: "0775"
+        owner: clay
+        group: docker
+      loop: >
+        {{ games.minecraft.plugins | list }}
+    - name: Copy Docker Compose File
+      ansible.builtin.template:
+        src: ./files/compose.yml.j2
+        dest: /opt/run/games/compose.yml
+        mode: "0775"
+        owner: clay
+        group: docker
+    # Spin Up
+    - name: Docker Compose Up
+      ansible.builtin.command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run/games

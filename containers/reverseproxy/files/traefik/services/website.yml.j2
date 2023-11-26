@@ -2,7 +2,7 @@ http:
   routers:
     website:
       rule: "Host(`{{ reverseproxy.domain }}`) || Host(`www.{{ reverseproxy.domain }}`)"
-      entrypoints:
+      entryPoints:
         - "https"
         - "http"
       service: website
@@ -10,10 +10,9 @@ http:
     website:
       loadBalancer:
         servers:
-          - url:
-            {% for host in hostvars[groups['website']] %}
-            - "http://{{ host['ansible_default_ipv4']['address'] }}:80"
-            {% endfor %}
+          {% for host in hostvars[groups['website']] %}
+          - address: "http://{{ host['ansible_default_ipv4']['address'] }}:80"
+          {% endfor %}
   middlewares:
     https-redirect:
       redirectscheme:

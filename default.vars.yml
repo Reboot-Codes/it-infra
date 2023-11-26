@@ -8,6 +8,7 @@ reverseproxy:
   services:
     - git
     - website
+    - games
 website:
   user_password: "Ducky-told-all-the-st0ries"
   wordpress_db_user_password: "wordpress-db-user-password-hehe"
@@ -16,3 +17,24 @@ git:
   user_password: "Abby-is-the-best-f0rensic-scientist"
   gitea_db_user_password: "gitea-db-user-password-hehe"
   root_db_user_password: "root-db-user-password-hehe"
+games:
+  user_password: "Clay-was-our-MI6-officer"
+  minecraft:
+    version: 1.20.2
+    build: 302
+    plugins:
+      - name: MCDash
+        url: https://github.com/gnmyt/MCDash/releases/download/v1.1.7/MCDash-1.1.7.jar
+        filename: MCDash-1.1.7.jar
+      - name: Geyser
+        url: https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
+        filename: Geyser-Spigot.jar
+      - name: Floodgate
+        url: https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+        filename: floodgate-spigot.jar
+      - name: Hurricane
+        url: https://github.com/GeyserMC/Hurricane/releases/download/1.2-SNAPSHOT-4/GeyserHacks.jar
+        filename: GeyserHacks.jar
+      - name: ViaVersion
+        url: https://github.com/ViaVersion/ViaVersion/releases/download/4.8.1/ViaVersion-4.8.1.jar
+        filename: ViaVersion-4.8.1.jar

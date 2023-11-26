@@ -1,0 +1,16 @@
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /opt/run
+
+# Minecraft Java Port
+EXPOSE 25565
+# Minecraft Bedrock Ports
+EXPOSE 19132
+# EXPOSE 19133
+# MCDash Port
+EXPOSE 7867
+
+# FYI: please mount the /opt/run directory and add in the server jar before running!
+
+# We'll give the server breathing room for 5-10 players.
+CMD java -Xms2G -Xmx2G -jar paper.jar --nogui
