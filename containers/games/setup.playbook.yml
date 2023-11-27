@@ -70,6 +70,13 @@
         mode: "0775"
         owner: clay
         group: docker
+    - name: Create HL2DM Directory
+      ansible.builtin.file:
+        name: /opt/run/games/hl2dm
+        state: directory
+        mode: "0775"
+        owner: clay
+        group: docker
     - name: Copy Minecraft Server Configuration
       ansible.builtin.template:
         src: ./files/minecraft/server.properties
@@ -203,6 +210,150 @@
       community.general.ufw:
         rule: allow
         port: 7867
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 1/16
+      community.general.ufw:
+        rule: allow
+        port: 27000
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 2/16
+      community.general.ufw:
+        rule: allow
+        port: 27001
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 3/16
+      community.general.ufw:
+        rule: allow
+        port: 27002
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 4/16
+      community.general.ufw:
+        rule: allow
+        port: 27003
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 5/16
+      community.general.ufw:
+        rule: allow
+        port: 27004
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 6/16
+      community.general.ufw:
+        rule: allow
+        port: 27005
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 7/16
+      community.general.ufw:
+        rule: allow
+        port: 27006
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 8/16
+      community.general.ufw:
+        rule: allow
+        port: 27007
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 9/16
+      community.general.ufw:
+        rule: allow
+        port: 27008
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 10/16
+      community.general.ufw:
+        rule: allow
+        port: 27009
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 11/16
+      community.general.ufw:
+        rule: allow
+        port: 27010
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 12/16
+      community.general.ufw:
+        rule: allow
+        port: 27011
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 13/16
+      community.general.ufw:
+        rule: allow
+        port: 27012
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 14/16
+      community.general.ufw:
+        rule: allow
+        port: 27013
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 15/16
+      community.general.ufw:
+        rule: allow
+        port: 27014
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/24
+    - name: Allow HL2DM Locally 16/16
+      community.general.ufw:
+        rule: allow
+        port: 27015
         src: '{{ item }}'
       loop:
         - 10.0.0.0/8

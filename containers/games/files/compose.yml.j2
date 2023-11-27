@@ -9,3 +9,12 @@ services:
       - 19132:19132
       # - 19133:19133
       - 7867:7867
+  hl2dm:
+    image: inanimate/steamcmd-play:hl2dm
+    ports:
+      - 27000-27015:27000-27015/udp
+      - 27015:27015
+    command: >
+      +sv_lan 1 +map dm_lockdown
+    volumes:
+      - /opt/run/games/hl2dm/:/home/daemon/steamcmd/hl2mp

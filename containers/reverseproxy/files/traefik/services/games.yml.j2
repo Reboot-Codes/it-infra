@@ -24,12 +24,22 @@ tcp:
       entryPoints:
         - "minecraft-java"
       service: minecraft-java
+    hl2dm-15:
+      entryPoints:
+        - "hl2dm-15"
+      service: hl2dm-15
   services:
     minecraft-java:
       loadBalancer:
         servers:
           {% for host in hostvars[groups['games']] %}
-          - address: "http://{{ host['ansible_default_ipv4']['address'] }}:25565"
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:25565"
+          {% endfor %}
+    hl2dm-15:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27015"
           {% endfor %}
 
 udp:
@@ -38,10 +48,170 @@ udp:
       entryPoints:
         - "minecraft-bedrock"
       service: minecraft-bedrock
+    hl2dm-0:
+      entryPoints:
+        - "hl2dm-0"
+      service: hl2dm-0
+    hl2dm-1:
+      entryPoints:
+        - "hl2dm-1"
+      service: hl2dm-1
+    hl2dm-2:
+      entryPoints:
+        - "hl2dm-2"
+      service: hl2dm-2
+    hl2dm-3:
+      entryPoints:
+        - "hl2dm-3"
+      service: hl2dm-3
+    hl2dm-4:
+      entryPoints:
+        - "hl2dm-4"
+      service: hl2dm-4
+    hl2dm-5:
+      entryPoints:
+        - "hl2dm-5"
+      service: hl2dm-5
+    hl2dm-6:
+      entryPoints:
+        - "hl2dm-6"
+      service: hl2dm-6
+    hl2dm-7:
+      entryPoints:
+        - "hl2dm-7"
+      service: hl2dm-7
+    hl2dm-8:
+      entryPoints:
+        - "hl2dm-8"
+      service: hl2dm-8
+    hl2dm-9:
+      entryPoints:
+        - "hl2dm-9"
+      service: hl2dm-9
+    hl2dm-10:
+      entryPoints:
+        - "hl2dm-10"
+      service: hl2dm-10
+    hl2dm-11:
+      entryPoints:
+        - "hl2dm-11"
+      service: hl2dm-11
+    hl2dm-12:
+      entryPoints:
+        - "hl2dm-12"
+      service: hl2dm-12
+    hl2dm-13:
+      entryPoints:
+        - "hl2dm-13"
+      service: hl2dm-13
+    hl2dm-14:
+      entryPoints:
+        - "hl2dm-14"
+      service: hl2dm-14
+    hl2dm-15:
+      entryPoints:
+        - "hl2dm-15"
+      service: hl2dm-15
   services:
     minecraft-java:
       loadBalancer:
         servers:
           {% for host in hostvars[groups['games']] %}
-          - address: "http://{{ host['ansible_default_ipv4']['address'] }}:19132"
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:19132"
+          {% endfor %}
+    hl2dm-0:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27000"
+          {% endfor %}
+    hl2dm-1:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27001"
+          {% endfor %}
+    hl2dm-2:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27002"
+          {% endfor %}
+    hl2dm-3:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27003"
+          {% endfor %}
+    hl2dm-4:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27004"
+          {% endfor %}
+    hl2dm-5:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27005"
+          {% endfor %}
+    hl2dm-6:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27006"
+          {% endfor %}
+    hl2dm-7:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27007"
+          {% endfor %}
+    hl2dm-8:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27008"
+          {% endfor %}
+    hl2dm-9:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27009"
+          {% endfor %}
+    hl2dm-10:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27010"
+          {% endfor %}
+    hl2dm-11:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27011"
+          {% endfor %}
+    hl2dm-12:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27012"
+          {% endfor %}
+    hl2dm-13:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27013"
+          {% endfor %}
+    hl2dm-14:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27014"
+          {% endfor %}
+    hl2dm-15:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['games']] %}
+          - address: "{{ host['ansible_default_ipv4']['address'] }}:27015"
           {% endfor %}
