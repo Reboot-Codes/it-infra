@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# In loving memory of mong, 2023-2023
+# In loving memory of mong, 2023-2023. Gone but not forgotten.
 
 apk add openssh shadow python3 sshpass bash
 rc-update add sshd
