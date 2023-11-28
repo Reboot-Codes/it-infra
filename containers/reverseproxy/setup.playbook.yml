@@ -107,6 +107,30 @@
       loop:
         - "80"
         - "443"
+    - name: Allow Minecraft Java, Bedrock, and HL2DM Globally
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        src: 'any'
+      loop:
+        - "25565"
+        - "19132"
+        - "27000"
+        - "27001"
+        - "27002"
+        - "27003"
+        - "27004"
+        - "27005"
+        - "27006"
+        - "27007"
+        - "27008"
+        - "27009"
+        - "27010"
+        - "27011"
+        - "27012"
+        - "27013"
+        - "27014"
+        - "27015"
     # Add extra services here
     - name: Deny Everything Else and Enable Firewall
       community.general.ufw:

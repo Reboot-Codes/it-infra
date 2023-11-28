@@ -1,4 +1,4 @@
-mong#!/bin/bash
+#!/bin/bash
 
 apk add openssh shadow python3 sshpass bash
 rc-update add sshd
