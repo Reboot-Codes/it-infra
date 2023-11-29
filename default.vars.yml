@@ -8,9 +8,14 @@ reverseproxy:
   services:
     - git
     - website
+    - oldsite
     - games
 website:
   user_password: "Ducky-told-all-the-st0ries"
+  wordpress_db_user_password: "wordpress-db-user-password-hehe"
+  root_db_user_password: "root-db-user-password-hehe"
+oldsite:
+  user_password: "jewrhfywgefgwuyge wgeufgwegfg"
   wordpress_db_user_password: "wordpress-db-user-password-hehe"
   root_db_user_password: "root-db-user-password-hehe"
 git:

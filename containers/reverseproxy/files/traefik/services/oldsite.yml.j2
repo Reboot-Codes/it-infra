@@ -1,0 +1,19 @@
+http:
+  routers:
+    oldsite:
+      rule: "Host(`old.{{ reverseproxy.domain }}`)`)"
+      entryPoints:
+        - "https"
+        - "http"
+      service: oldsite
+  services:
+    oldsite:
+      loadBalancer:
+        servers:
+          {% for host in hostvars[groups['oldsite']] %}
+          - address: "http://{{ host['ansible_default_ipv4']['address'] }}:80"
+          {% endfor %}
+  middlewares:
+    https-redirect:
+      redirectscheme:
+        scheme: https

@@ -1,0 +1,8 @@
+---
+- name: Spin Down Old-Site
+  hosts: oldsite
+  tasks:
+    - name: Docker Compose Down
+      ansible.builtin.command:
+        cmd: "docker compose down ./compose.yml"
+        chdir: /opt/run/oldsite

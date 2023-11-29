@@ -1,0 +1,31 @@
+version: "3.11"
+services:
+  db:
+    image: mariadb:11.1.2
+    volumes:
+      - /opt/run/oldsite/mysql:/var/lib/mysql
+    environment:
+      - MARIADB_USER=wordpress
+      - MARIADB_PASSWORD={{ oldsite.wordpress_db_user_password }}
+      - MARIADB_DATABASE=wordpress
+      - MARIADB_ROOT_PASSWORD={{ oldsite.root_db_user_password }}
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin:5.2.1
+    environment:
+      - PMA_HOST=db
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:6.3.2
+    volumes:
+      - /opt/run/oldsite/wordpress:/var/www/html
+    ports:
+      - 80:80
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD={{ oldsite.wordpress_db_user_password }}
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_TABLE_PREFIX=wp_

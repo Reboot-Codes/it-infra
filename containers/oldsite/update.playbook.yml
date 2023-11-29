@@ -1,0 +1,19 @@
+---
+- name: Update Old-Site
+  hosts: oldsite
+  tasks:
+    - name: Docker Compose Down
+      ansible.builtin.command:
+        cmd: "docker compose down ./compose.yml"
+        chdir: /opt/run/oldsite
+    - name: Copy Compose File
+      ansible.builtin.template:
+        src: files/compose.yml.j2
+        dest: /opt/run/oldsite/compose.yml
+        mode: "0775"
+        owner: leroy
+        group: docker
+    - name: Docker Compose Up
+      ansible.builtin.command:
+        cmd: "docker compose up ./compose.yml"
+        chdir: /opt/run/oldsite
