@@ -11,6 +11,12 @@ Currently done:
 
 ## Setup
 
+### Container setup
+
+Run `wget -O - "https://raw.githubusercontent.com/reboot-codes/it-infra/master/client-setup.sh" | ash` on every container
+
+### Host setup
+
 Assuming your containers are setup correctly... Make a copy of `./default.vars.yml`, name it `./vars.yml`, and fill it out. Then run `./setup.sh`.
 
 ## Updates
